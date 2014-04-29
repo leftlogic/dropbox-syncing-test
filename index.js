@@ -1,22 +1,43 @@
 var http = require('http');
+var express = require('express');
+var crypto = require('crypto');
 
-var data;
+var qs = require('querystring');
 
-var server = http.createServer(function (request, response) {
-  if (request.method === 'POST') {
-    var body = '';
-    request.on('data', function (chunk) {
-      body += chunk;
-    });
-    request.on('end', function () {
-      data = body;
-      response.writeHead(200, {'Content-Type': 'text/plain'});
-      response.end();
-    });
+var app = express();
+
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+
+var data = {};
+
+app.use(function (req, res, next) {
+  console.log('with base');
+  console.log('--------------REQ.BODY--------------');
+  console.log(req.body);
+  next();
+});
+
+app.post('*', function (req, res, next) {
+  console.log('--------------REQ.BODY--------------');
+  console.log(req.body);
+  res.send(200, "OK");
+});
+
+app.get('*', function (req, res, next) {
+  var challenge = qs.parse(req.url.split('?')[1]).challenge;
+  if (challenge) {
+    var sig = req.get('X-Dropbox-Signature');
+    var encrypted = crypto.createHmac('SHA256', 'z1zabgu79hxrwc3').update('dbx').digest('hex').toString();
+    if (encrypted === sig) {
+      res.send(challenge);
+    } else {
+      res.send(400);
+    }
   } else {
-    response.write(data);
-    response.end();
+    res.json(data);
+    res.end();
   }
 });
 
-server.listen(process.env.PORT);
+app.listen(process.env.PORT);

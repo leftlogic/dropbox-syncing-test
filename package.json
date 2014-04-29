@@ -1,0 +1,19 @@
+{
+  "name": "lit-scrubland-9352",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@heroku.com:lit-scrubland-9352.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~3.0.0"
+  }
+}
